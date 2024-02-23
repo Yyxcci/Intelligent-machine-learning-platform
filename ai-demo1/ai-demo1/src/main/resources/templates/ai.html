@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Ai Studio</title>
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	</head>
+	<body>
+		<h1 style="text-align: center;color: rebeccapurple">Hello Ai Studio!</h1>
+		<h1 style="text-align: center;color: darkslateblue">Let's go!</h1>
+		<h2 style="text-align: center">文本识别</h2>
+		<div id="app">
+			<el-upload style="text-align: center" class="upload-demo" action="http://127.0.0.1:8080/pic"
+				:on-success="handlePicSuccess">
+				<el-button size="small" type="primary">点击上传</el-button>
+				<div slot="tip" class="el-upload__tip">只能上传图片文件，且不超过500M</div>
+			</el-upload>
+			<el-input style="display:block;margin-left:auto;margin-right:auto;width: 50%;" type="textarea" :rows="5"
+				placeholder="文本内容..." v-model="words">
+			</el-input>
+
+			<h2 style="text-align: center">图像识别</h2>
+			<el-upload style="text-align: center" class="upload-demo" action="http://127.0.0.1:8080/img"
+				:on-success="handleImgSuccess">
+				<el-button size="small" type="primary">点击上传</el-button>
+				<div slot="tip" class="el-upload__tip">只能上传图片文件，且不超过500M</div>
+			</el-upload>
+			<el-input style="display:block;margin-left:auto;margin-right:auto;width: 50%;" type="textarea" :rows="5"
+				placeholder="文本内容..." v-model="imgRecognition">
+			</el-input>
+
+			<h2 style="text-align: center">NLP 纠错</h2>
+			<el-input style="display:block;margin-left:auto;margin-right:auto;width: 50%;" type="textarea" :rows="5"
+				placeholder="输入文本内容..." v-model="nlp_input">
+			</el-input>
+			<el-input style="display:block;margin-left:auto;margin-right:auto;width: 50%;" type="textarea" :rows="5"
+				placeholder="纠错文本内容..." v-model="nlp_output">
+			</el-input>
+			<el-button style="display:block;margin-left:auto;margin-right:auto" size="small" type="primary"
+				@click="nlp_correction">提交 NLP</el-button>
+		</div>
+	</body>
+
+	<!-- import Vue before Element -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<!-- import JavaScript -->
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<script>
+		new Vue({
+			el: '#app',
+			data: {
+				words: '',
+				imgRecognition: '',
+				nlp_input: '',
+				nlp_output: ''
+			},
+			methods: {
+				handlePicSuccess(res) {
+					console.log(res);
+					this.words = res;
+				},
+				handleImgSuccess(res) {
+					console.log(res);
+					this.imgRecognition = res;
+				},
+				nlp_correction() {
+					axios.get("http://127.0.0.1:8080/correction", {
+						params: {
+							text: this.nlp_input
+						}
+					}).then(res => {
+						console.log(res.data);
+						this.nlp_output = res.data;
+					})
+				},
+			}
+		})
+	</script>
+</html>
